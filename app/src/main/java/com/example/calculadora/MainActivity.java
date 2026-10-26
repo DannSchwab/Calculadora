@@ -12,14 +12,20 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
+
 public class MainActivity extends AppCompatActivity {
 
-    // límite de dígitos para que el número quepa en un long
-    private static final int MAX_DIGITOS = 15;
+    // límite de dígitos que se pueden escribir y cifras significativas de los resultados
+    private static final int MAX_DIGITOS = 12;
+    private static final MathContext PRECISION = new MathContext(MAX_DIGITOS);
+    private static final String ERROR = "Error";
 
     private TextView tvPantalla;
-    private long acumulado = 0;         // primer operando
-    private String operacion = null;    // "+", "-" o null si no hay ninguna pendiente
+    // BigDecimal en vez de double para evitar errores de redondeo (ej: 0.1 + 0.2 = 0.30000000000000004)
+    private BigDecimal acumulado = BigDecimal.ZERO; // primer operando
+    private String operacion = null;    // "+", "-", "×", "÷" o null si no hay ninguna pendiente
     private boolean nuevoNumero = true; // el próximo dígito empieza un número nuevo
 
     @Override
@@ -53,26 +59,40 @@ public class MainActivity extends AppCompatActivity {
         switch (texto) {
             case "+":
             case "-":
-                // si ya había una operación pendiente, resolverla primero (ej: 5 + 3 - ...)
+            case "×":
+            case "÷":
+                if (pantalla.equals(ERROR)) {
+                    break;
+                }
+                // si ya había una operación pendiente, resolverla primero (ej: 5 + 3 × ...)
                 if (operacion != null && !nuevoNumero) {
-                    acumulado = calcular(acumulado, Long.parseLong(pantalla), operacion);
-                    tvPantalla.setText(String.valueOf(acumulado));
+                    BigDecimal resultado = calcular(acumulado, new BigDecimal(pantalla), operacion);
+                    if (resultado == null) {
+                        mostrarError();
+                        break;
+                    }
+                    acumulado = resultado;
+                    tvPantalla.setText(formatear(acumulado));
                 } else {
-                    acumulado = Long.parseLong(pantalla);
+                    acumulado = new BigDecimal(pantalla);
                 }
                 operacion = texto;
                 nuevoNumero = true;
                 break;
             case "=":
                 if (operacion != null) {
-                    long resultado = calcular(acumulado, Long.parseLong(pantalla), operacion);
-                    tvPantalla.setText(String.valueOf(resultado));
+                    BigDecimal resultado = calcular(acumulado, new BigDecimal(pantalla), operacion);
+                    if (resultado == null) {
+                        mostrarError();
+                        break;
+                    }
+                    tvPantalla.setText(formatear(resultado));
                     operacion = null;
                     nuevoNumero = true;
                 }
                 break;
             case "C":
-                // borrar último dígito
+                // borrar último carácter
                 if (nuevoNumero) {
                     break;
                 }
@@ -85,15 +105,24 @@ public class MainActivity extends AppCompatActivity {
             case "CA":
                 // borrarlo todo
                 tvPantalla.setText("0");
-                acumulado = 0;
+                acumulado = BigDecimal.ZERO;
                 operacion = null;
                 nuevoNumero = true;
+                break;
+            case ".":
+                // empezar con "0." si es un número nuevo; ignorar un segundo punto
+                if (nuevoNumero) {
+                    tvPantalla.setText("0.");
+                } else if (!pantalla.contains(".")) {
+                    tvPantalla.setText(pantalla + ".");
+                }
+                nuevoNumero = false;
                 break;
             default:
                 // es un número: añadirlo a la pantalla
                 if (nuevoNumero || pantalla.equals("0")) {
                     tvPantalla.setText(texto);
-                } else if (pantalla.replace("-", "").length() < MAX_DIGITOS) {
+                } else if (pantalla.replaceAll("[^0-9]", "").length() < MAX_DIGITOS) {
                     tvPantalla.setText(pantalla + texto);
                 }
                 nuevoNumero = false;
@@ -101,7 +130,34 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private long calcular(long a, long b, String op) {
-        return op.equals("+") ? a + b : a - b;
+    // devuelve null si la operación no es válida (división entre cero)
+    private BigDecimal calcular(BigDecimal a, BigDecimal b, String op) {
+        switch (op) {
+            case "+":
+                return a.add(b);
+            case "-":
+                return a.subtract(b);
+            case "×":
+                return a.multiply(b);
+            default:
+                if (b.signum() == 0) {
+                    return null;
+                }
+                return a.divide(b, PRECISION);
+        }
+    }
+
+    // redondear y quitar ceros sobrantes; notación científica si el número es demasiado largo
+    private String formatear(BigDecimal valor) {
+        BigDecimal redondeado = valor.round(PRECISION).stripTrailingZeros();
+        String texto = redondeado.toPlainString();
+        return texto.length() > MAX_DIGITOS + 2 ? redondeado.toString() : texto;
+    }
+
+    private void mostrarError() {
+        tvPantalla.setText(ERROR);
+        acumulado = BigDecimal.ZERO;
+        operacion = null;
+        nuevoNumero = true;
     }
 }

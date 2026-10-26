@@ -1,19 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="8dp">
 
-    <!-- 1. Pantalla: solo ocupa lo que necesita -->
+    <!-- 1. Pantalla: altura fija; el texto se encoge si el número no cabe -->
     <TextView
         android:id="@+id/tvPantalla"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="96dp"
         android:text="0"
         android:textSize="48sp"
-        android:gravity="end"
+        android:maxLines="1"
+        app:autoSizeTextType="uniform"
+        app:autoSizeMinTextSize="20sp"
+        app:autoSizeMaxTextSize="48sp"
+        android:gravity="end|center_vertical"
         android:padding="16dp" />
 
     <!-- 2. Botones: ocupa todo el espacio que sobra -->
@@ -26,13 +31,40 @@
         android:rowCount="5">
 
         <Button
-        android:text="1"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_columnWeight="1"
-        android:layout_rowWeight="1"
-        android:layout_margin="4dp" />
-
+            android:text="C"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_columnWeight="1"
+            android:layout_rowWeight="1"
+            android:layout_margin="4dp" />
+        <Button
+            android:text="CA"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_columnWeight="1"
+            android:layout_rowWeight="1"
+            android:layout_margin="4dp" />
+        <Button
+            android:text="÷"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_columnWeight="1"
+            android:layout_rowWeight="1"
+            android:layout_margin="4dp" />
+        <Button
+            android:text="×"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_columnWeight="1"
+            android:layout_rowWeight="1"
+            android:layout_margin="4dp" />
+        <Button
+            android:text="1"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_columnWeight="1"
+            android:layout_rowWeight="1"
+            android:layout_margin="4dp" />
         <Button
             android:text="2"
             android:layout_width="0dp"
@@ -40,7 +72,6 @@
             android:layout_columnWeight="1"
             android:layout_rowWeight="1"
             android:layout_margin="4dp" />
-
         <Button
             android:text="3"
             android:layout_width="0dp"
@@ -48,7 +79,6 @@
             android:layout_columnWeight="1"
             android:layout_rowWeight="1"
             android:layout_margin="4dp" />
-
         <Button
             android:text="-"
             android:layout_width="0dp"
@@ -56,7 +86,6 @@
             android:layout_columnWeight="1"
             android:layout_rowWeight="1"
             android:layout_margin="4dp" />
-
         <Button
             android:text="4"
             android:layout_width="0dp"
@@ -64,7 +93,6 @@
             android:layout_columnWeight="1"
             android:layout_rowWeight="1"
             android:layout_margin="4dp" />
-
         <Button
             android:text="5"
             android:layout_width="0dp"
@@ -72,7 +100,6 @@
             android:layout_columnWeight="1"
             android:layout_rowWeight="1"
             android:layout_margin="4dp" />
-
         <Button
             android:text="6"
             android:layout_width="0dp"
@@ -80,7 +107,6 @@
             android:layout_columnWeight="1"
             android:layout_rowWeight="1"
             android:layout_margin="4dp" />
-
         <Button
             android:text="+"
             android:layout_width="0dp"
@@ -88,7 +114,6 @@
             android:layout_columnWeight="1"
             android:layout_rowWeight="1"
             android:layout_margin="4dp" />
-
         <Button
             android:text="7"
             android:layout_width="0dp"
@@ -96,7 +121,6 @@
             android:layout_columnWeight="1"
             android:layout_rowWeight="1"
             android:layout_margin="4dp" />
-
         <Button
             android:text="8"
             android:layout_width="0dp"
@@ -104,7 +128,6 @@
             android:layout_columnWeight="1"
             android:layout_rowWeight="1"
             android:layout_margin="4dp" />
-
         <Button
             android:text="9"
             android:layout_width="0dp"
@@ -112,15 +135,14 @@
             android:layout_columnWeight="1"
             android:layout_rowWeight="1"
             android:layout_margin="4dp" />
-
         <Button
             android:text="="
             android:layout_width="0dp"
             android:layout_height="0dp"
+            android:layout_rowSpan="2"
             android:layout_columnWeight="1"
-            android:layout_rowWeight="1"
+            android:layout_rowWeight="2"
             android:layout_margin="4dp" />
-
         <Button
             android:text="0"
             android:layout_width="0dp"
@@ -129,17 +151,8 @@
             android:layout_columnWeight="2"
             android:layout_rowWeight="1"
             android:layout_margin="4dp" />
-
         <Button
-            android:text="C"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_columnWeight="1"
-            android:layout_rowWeight="1"
-            android:layout_margin="4dp" />
-
-        <Button
-            android:text="CA"
+            android:text="."
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_columnWeight="1"
